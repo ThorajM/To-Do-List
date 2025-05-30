@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modern To-Do List</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <header>
+      <div class="header-content">
+        <h1><i class="fas fa-tasks"></i> Modern To-Do List</h1>
+        <div class="controls">
+          <button class="btn" id="addCategoryBtn" title="Manage categories">
+            <i class="fas fa-tag"></i> Categories
+          </button>
+          <div class="theme-toggle" title="Switch theme">
+            <span>Light</span>
+            <label class="switch">
+              <input type="checkbox" id="themeSwitch">
+              <span class="slider round"></span>
+            </label>
+            <span>Dark</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <div class="main-container">
+        <!-- Left sidebar for filters and search -->
+        <aside class="sidebar">
+          <h2><i class="fas fa-filter"></i> Filter & Search</h2>
+          <div class="filter-section">
+            <div class="input-group">
+              <label for="filterCategory">Category</label>
+              <select id="filterCategory">
+                <option value="">All Categories</option>
+                <!-- Categories will be added dynamically -->
+              </select>
+            </div>
+            <div class="input-group">
+              <label for="filterPriority">Priority</label>
+              <select id="filterPriority">
+                <option value="">All Priorities</option>
+                <option value="high">High</option>
+                <option value="medium">Medium</option>
+                <option value="low">Low</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label for="filterStatus">Status</label>
+              <select id="filterStatus">
+                <option value="">All Statuses</option>
+                <option value="completed">Completed</option>
+                <option value="pending">Pending</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label for="searchInput">Search</label>
+              <input type="text" id="searchInput" placeholder="Type to search...">
+            </div>
+            <button id="clearFiltersBtn" class="btn secondary" title="Clear all filters">
+              <i class="fas fa-times"></i> Clear Filters
+            </button>
+          </div>
+        </aside>
+
+        <!-- Main content for task input and list -->
+        <div class="content">
+          <section class="task-input-section">
+            <h2><i class="fas fa-plus-circle"></i> Add New Task</h2>
+            <div class="task-input-card">
+              <div class="input-group">
+                <label for="taskInput">Task Description</label>
+                <input type="text" id="taskInput" placeholder="What needs to be done?" autofocus>
+              </div>
+              <div class="input-row">
+                <div class="input-group">
+                  <label for="taskCategory">Category</label>
+                  <select id="taskCategory">
+                    <option value="">Select Category</option>
+                    <!-- Categories will be added dynamically -->
+                  </select>
+                </div>
+                <div class="input-group">
+                  <label for="taskPriority">Priority</label>
+                  <select id="taskPriority">
+                    <option value="low">Low</option>
+                    <option value="medium" selected>Medium</option>
+                    <option value="high">High</option>
+                  </select>
+                </div>
+                <div class="input-group">
+                  <label for="taskDateTime">Due Date</label>
+                  <input type="datetime-local" id="taskDateTime">
+                </div>
+                <button id="addTaskBtn" class="btn primary" title="Add task to your list">
+                  <i class="fas fa-plus"></i> Add Task
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <section class="stats-section">
+            <h2><i class="fas fa-chart-bar"></i> Task Statistics</h2>
+            <div class="stats">
+              <div class="stat-item">
+                <span class="stat-icon"><i class="fas fa-list"></i></span>
+                <span id="totalTasks">0</span> Tasks
+              </div>
+              <div class="stat-item">
+                <span class="stat-icon"><i class="fas fa-check-circle"></i></span>
+                <span id="completedTasks">0</span> Completed
+              </div>
+              <div class="progress-container">
+                <label>Completion Progress</label>
+                <div class="progress-bar">
+                  <div class="progress" id="progressBar"></div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="tasks-section">
+            <h2><i class="fas fa-clipboard-list"></i> Your Tasks</h2>
+            <div id="emptyState" class="empty-state">
+              <i class="fas fa-clipboard-list"></i>
+              <p>No tasks yet. Add your first task above!</p>
+            </div>
+            <ul id="taskList"></ul>
+          </section>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal for managing categories -->
+  <div id="categoryModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2><i class="fas fa-tag"></i> Manage Categories</h2>
+      <div id="categoryList" class="category-list"></div>
+      <div class="add-category">
+        <div class="input-group">
+          <label for="categoryName">Category Name</label>
+          <input type="text" id="categoryName" placeholder="Enter category name">
+        </div>
+        <div class="input-group">
+          <label for="categoryColor">Category Color</label>
+          <input type="color" id="categoryColor" value="#4a6dff">
+        </div>
+        <button id="saveCategoryBtn" class="btn primary">
+          <i class="fas fa-plus"></i> Add Category
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for editing tasks -->
+  <div id="editTaskModal" class="modal">
+    <div class="modal-content">
+      <span class="close-edit">&times;</span>
+      <h2><i class="fas fa-edit"></i> Edit Task</h2>
+      <div class="input-group">
+        <label for="editTaskText">Task Description</label>
+        <input type="text" id="editTaskText" placeholder="Edit task description">
+      </div>
+      <div class="input-group">
+        <label for="editTaskCategory">Category</label>
+        <select id="editTaskCategory">
+          <option value="">Select Category</option>
+          <!-- Categories will be added dynamically -->
+        </select>
+      </div>
+      <div class="input-group">
+        <label for="editTaskPriority">Priority</label>
+        <select id="editTaskPriority">
+          <option value="low">Low</option>
+          <option value="medium" selected>Medium</option>
+          <option value="high">High</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label for="editTaskDateTime">Due Date</label>
+        <input type="datetime-local" id="editTaskDateTime">
+      </div>
+      <button id="saveEditBtn" class="btn primary">
+        <i class="fas fa-save"></i> Save Changes
+      </button>
+    </div>
+  </div>
+
+  <!-- Toast notification -->
+  <div id="toast" class="toast"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
